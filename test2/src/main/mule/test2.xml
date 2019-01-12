@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="bc2af445-531f-46d7-9c31-42e7c6e356c9" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="test2Flow" doc:id="3b7c92c9-24e2-444b-8888-3a12e63d1251" >
+		<http:listener doc:name="Listener" doc:id="ca30824d-04b0-44d7-a06a-9c324a0406e5" config-ref="HTTP_Listener_config" path="/test2"/>
+		<set-variable value="#[attributes.queryParams.no1 as Number]" doc:name="Set Variable" doc:id="96424f19-0c2a-4140-9622-7059bc6609b6" variableName="no1"/>
+		<set-variable value="#[attributes.queryParams.no2 as Number]" doc:name="Set Variable" doc:id="7c01a500-7d5c-4a81-b1eb-2295acb78871" variableName="no2"/>
+		<choice doc:name="Choice" doc:id="d32184bc-8150-4810-b05c-f23394db3abc" >
+			<when expression='#[attributes.queryParams.choice=="add"]'>
+				<set-variable value="#[vars.no1 + vars.no2]" doc:name="Set Variable" doc:id="c4a3d952-c5e6-4df0-bab4-15bc321fa75a" variableName="result"/>
+			</when>
+			<when expression='#[attributes.queryParams.choice=="subtract"]'>
+				<set-variable value="#[vars.no1 - vars.no2]" doc:name="Set Variable" doc:id="20086c74-d1a7-444d-95dd-096e3962839f" variableName="result"/>
+			</when>
+			<otherwise >
+				<set-variable value="#[-1 as Number]" doc:name="Set Variable" doc:id="4f6d9296-dfe7-4fed-818f-4fe3918b6d83" variableName="result"/>
+			</otherwise>
+		</choice>
+		<set-payload value="#[vars.result as String]" doc:name="Set Payload" doc:id="0b51773e-3005-43cc-b527-f3ce77b5b04f" mimeType="text/html"/>
+	</flow>
+</mule>

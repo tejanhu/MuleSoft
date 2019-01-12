@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="05d7eacf-c0e3-4625-8b21-bff347581161" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="sampletransformtestFlow" doc:id="82251551-1a3a-45b2-893f-880065f41009" >
+		<http:listener doc:name="Listener" doc:id="323433d1-a10c-4137-83cf-fba0311645d1" config-ref="HTTP_Listener_config" path="/sample" allowedMethods="GET"/>
+		<set-variable value="#[attributes.queryParams.phyMark as Number]" doc:name="Set Variable" doc:id="48a404e9-5625-4787-a4b3-c971c5b1f25e" variableName="phyMark"/>
+		<set-variable value="#[attributes.queryParams.chemMark as Number]" doc:name="Set Variable" doc:id="212c2183-6cef-4cc6-83b5-3e08db70e971" variableName="chemMark"/>
+		<set-variable value="#[attributes.queryParams.mathMark as Number]" doc:name="Set Variable" doc:id="8174b542-bbf9-43a9-97fe-69f4cbd7c3bc" variableName="mathMark"/>
+		<ee:transform doc:name="Transform Message" doc:id="aeeaa20e-7cbf-434e-ab88-9e82d3c6bdee" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+var result = vars.phyMark + vars.chemMark + vars.mathMark
+fun percentage(result)= result/3/60 * 100
+fun grade(p) = 
+if(p<60)
+	"FAIL"
+else if(p>90)
+	"A+"
+else if(p>=80 and p<90)
+	"A"
+else if(p>=70 and p<80)
+	"B"
+else
+	"C"
+
+---
+{
+	"Physic Mark": vars.phyMark as String,
+	"Chemistry Mark" : vars.chemMark as String,
+	"Math Mark" : vars.mathMark as String,
+	"Total Mark" : result as String,
+	"Percentage" : percentage(result) as String,
+	"Grade" : grade(percentage(result)) as String
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="Copy_of_sampletransformtestFlow" doc:id="7d7e7fe3-7c4e-41f0-842d-694d66ec548d" >
+		<http:listener doc:name="Copy_of_Listener" doc:id="cb10644d-8d24-45cc-968b-bdcdb0a8bcfe" config-ref="HTTP_Listener_config" path="/sample" allowedMethods="POST"/>
+		<set-variable value="#[message.payload.phyMark as Number]" doc:name="Copy_of_Set Variable" doc:id="380c4dec-47c4-4d52-bb9c-44648f4fc79e" variableName="phyMark" />
+		<set-variable value="#[message.payload.chemMark as Number]" doc:name="Copy_of_Set Variable" doc:id="7540ce2e-7a55-4357-a1e5-e2e5e963ff5a" variableName="chemMark" />
+		<set-variable value="#[message.payload.mathMark as Number]" doc:name="Copy_of_Set Variable" doc:id="1fc72a26-cfe1-477e-b643-bc6cfd54cafa" variableName="mathMark" />
+		<logger level="INFO" doc:name="Logger" doc:id="f3c07d56-fd72-42be-87b8-0f0a0d961998" message='#["Maths: " ++ vars.mathMark as String]'/>
+		<ee:transform doc:name="Copy_of_Transform Message" doc:id="037a2381-ea15-4a0a-8ab3-1fbd50f739bc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+var result = vars.phyMark + vars.chemMark + vars.mathMark
+fun percentage(result)= result/3/60 * 100
+fun grade(p) = 
+if(p<60)
+	"FAIL"
+else if(p>90)
+	"A+"
+else if(p>=80 and p<90)
+	"A"
+else if(p>=70 and p<80)
+	"B"
+else
+	"C"
+
+---
+{
+	"Physic Mark": vars.phyMark as String,
+	"Chemistry Mark" : vars.chemMark as String,
+	"Math Mark" : vars.mathMark as String,
+	"Total Mark" : result as String,
+	"Percentage" : percentage(result) as String,
+	"Grade" : grade(percentage(result)) as String
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
