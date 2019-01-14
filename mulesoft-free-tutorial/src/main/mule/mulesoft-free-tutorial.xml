@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c5491b34-5681-4dca-8e19-94a24cb7a2bb" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="mulesoft-free-tutorialFlow" doc:id="1b92943f-c0b2-4b37-b975-8603e1dd47f7" >
+		<http:listener doc:name="HTTP_localhost" doc:id="5fe7f994-3ed4-483a-b0a7-b5ce5421a8f8" config-ref="HTTP_Listener_config" path="/GetMulerequest"/>
+		<set-payload value="Welcome to The Mulesoft Tutorial" doc:name="Set Payload_Mulesoft Tutorial" doc:id="73dd9873-7f49-4d9e-8757-19494b1d73e4" />
+		<logger level="INFO" doc:name="Logger" doc:id="1ebebf1b-5727-404c-a397-7daa617e6d78" />
+	</flow>
+</mule>
