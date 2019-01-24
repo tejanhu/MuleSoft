@@ -1,20 +1,28 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var app = express();
+const express = require('express');
+
+const mysql = require("mysql");
+
+const http = require("http");
+
+const url = require("url");
+
+const db_con = require("./configuration.js");
+
+const bodyParser = require('body-parser');
+
+const app = express();
+
+var username = '';
+
+var password = '';
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-
 
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res){
     res.render('index');
 });
-
-// app.get('/signin', function(req, res){
-//     // console.log(req.query);
-//     res.render('login');
-// });
 
 app.get('/signin', function(req, res){
     // console.log(req.query);
@@ -33,12 +41,38 @@ app.get('/login', function(req, res){
 app.post('/login', urlencodedParser, function(req, res){
     console.log(req.body);
     res.render('login', {qs: req.query});
+    username = req.body.username;
+    password = req.body.password;
+
+    db_con.query('SELECT * FROM users', function(err, rows, fields) {
+        if (err) 
+            throw err;
+            // console.log("Request object\n username:" + req.body.username +"\n password:" + req.body.password);
+        
+            rows.forEach(element => {
+                if(username==element.username && password==element.password){
+                    // res.send("<h1>Valid User!<h1/>");
+                    // console.log("DATABASE username \n:" + element.username);
+                    // console.log("DATABASE password \n:" + element.password);
+                    console.log("Valid User!");
+                    return;
+                }
+                else{
+                    // res.send("<h1>Invalid User!</h1>")
+                    // console.log("DATABASE username \n:" + element.username);
+                    // console.log("DATABASE password \n:" + element.password);
+                    console.log("Invalid User!");
+
+                }
+            })
+        console.log(username);
+        console.log(password);
+       
+    
+      });
+
 });
 
-// app.post('/signin', urlencodedParser, function(req, res){
-//     console.log(req.body);
-//     res.render('login-success' + {data: req.body});
-// });
 
 app.get('/register', function(req, res){
     // console.log(req.query);
@@ -48,5 +82,8 @@ app.get('/register', function(req, res){
 app.get('/profile/:name', function(req, res){
     res.send('You requested to see the profile of name: '+ req.params.name);
 });
+
+
+
 
 app.listen(2019);
