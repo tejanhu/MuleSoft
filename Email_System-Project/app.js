@@ -51,18 +51,10 @@ app.post('/login', urlencodedParser, function(req, res){
         
             rows.forEach(element => {
                 if(username==element.username && password==element.password){
-                    // res.send("<h1>Valid User!<h1/>");
-                    // console.log("DATABASE username \n:" + element.username);
-                    // console.log("DATABASE password \n:" + element.password);
                     console.log("Valid User!");
-                    return;
                 }
                 else{
-                    // res.send("<h1>Invalid User!</h1>")
-                    // console.log("DATABASE username \n:" + element.username);
-                    // console.log("DATABASE password \n:" + element.password);
-                    console.log("Invalid User!");
-
+                    return;
                 }
             })
         console.log(username);
