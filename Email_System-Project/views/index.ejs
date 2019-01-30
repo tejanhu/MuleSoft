@@ -5,10 +5,17 @@
             </head>
                     
           <body>
-              <h1>Homepage<h1/>
-              <a href='/login'>Sigin</a>
+              <h1>Homepage</h1>
+              <!-- <a href='/login'>Sigin</a> -->
               </br>
               <a href='/register'>Create Account</a>
+              <form id='login-form' method='POST' action='/' >
+                <input type='text' placeholder='username' name="username" value="<%= qs.username %>"/>
+                <br>
+                <input type='text' placeholder='password' name="password" value="<%= qs.password %>"/>
+                </br>
+                <input type='submit' value='Login'/>
+            </form>
         </body>
                         
 </html>
