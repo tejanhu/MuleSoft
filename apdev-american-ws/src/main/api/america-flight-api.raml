@@ -1,0 +1,116 @@
+#%RAML 1.0
+version: v1
+types:
+  Flight:
+    properties:
+      ID?:
+        example: "4400"
+        type: string
+      code:
+        type: string
+      price:
+        example: 5
+        type: number
+        format: int
+      departureDate:
+        example: 2019-02-18
+        type: date-only
+      origin:
+        example: SFO
+        type: string
+        pattern: (SFO|LAX|CLE)
+      destination:
+        example: LAX
+        type: string
+        pattern: (SFO|LAX|CLE)
+      emptySeats:
+        example: 1
+        type: number
+        format: int
+      plane?:
+        properties:
+          type:
+            example: Boeing477
+            type: string
+          totalSeats:
+            example: 1
+            type: number
+            format: int
+title: america flights
+mediaType:
+  - application/json
+/flights:
+  get:
+    description: "null"
+    responses:
+      "200":
+        body:
+          application/json:
+      "400":
+        body:
+          application/json:
+    queryParameters:
+      destination?:
+        description: ""
+        example: CLE
+        type: string
+        pattern: (SFO|LAX|CLE)
+  post:
+    description: "null"
+    body:
+      application/json:
+        type:
+          - Flight
+        example:
+          strict: true
+          value:
+            plane:
+              type: Boeing477
+              totalSeats: 1
+            origin: SFO
+            departureDate: 2019-02-18
+            code: ABC440
+            emptySeats: 1
+            price: 5
+            destination: LAX
+    responses:
+      "400":
+        body:
+          application/json:
+            properties:
+              message:
+                example: BAD REQUEST
+                type: string
+      "201":
+        body:
+          application/json:
+            example:
+              strict: true
+              value:
+                message: Flight added (but not really)
+            properties:
+              message:
+                example: Flight added (but not really)
+                type: string
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/f30ca03d-87b5-4eb7-9d27-0732579cad7a/
+/flights/{ID}:
+  get:
+    responses:
+      "200":
+        body:
+          application/json:
+            type:
+              - Flight
+      "400":
+        body:
+          application/json:
+            properties:
+              message:
+                example: BAD REQUEST
+                type: string
+  uriParameters:
+    ID:
+      description: ID
+      example: 1
+      type: number
+      format: int

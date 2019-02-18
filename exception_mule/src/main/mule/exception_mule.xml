@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="ca877a8e-e7c4-4ea4-9d4d-dff6bd4ed367" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="edfce6e0-45d4-4c81-8848-0a3d29137f6a" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="tesco" />
+	</db:config>
+	<flow name="exception_muleFlow" doc:id="cd8e5a11-4f56-476d-b8dd-cef48152d5a8" >
+		<http:listener doc:name="Listener" doc:id="9424df20-fe4f-4401-a8e2-edbe10a51afe" config-ref="HTTP_Listener_config" path="/"/>
+		<try doc:name="Try" doc:id="83851616-06ec-4050-9801-770ab404bf6d" >
+			<db:select doc:name="Select" doc:id="96502363-4adc-4f2f-8f20-dae56601320b" config-ref="Database_Config">
+				<db:sql >SELECT * FROMs product;</db:sql>
+			</db:select>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d7342c4d-9bf1-4c4b-808e-ad80f327498e" type="DB:BAD_SQL_SYNTAX">
+					<logger level="INFO" doc:name="Logger" doc:id="cda01362-d95c-45fa-b434-40ce3f6abde9" message='"BeANNY is a dodgy guy"'/>
+					<ee:transform doc:name="Transform Message" doc:id="5d6ced0b-96ad-4b2f-a021-5ddc4a4b34c4" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+---
+("BeANNY is a dodgy guy") as String]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<logger level="INFO" doc:name="Logger" doc:id="69888c4b-28dd-47b4-93e9-b789ad1aa1ea" />
+		<ee:transform doc:name="Transform Message" doc:id="b3d8ecd8-aa32-4408-b0f6-55d6f9851cc1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"data":payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
