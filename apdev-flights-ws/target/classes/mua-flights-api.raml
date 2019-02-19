@@ -1,0 +1,33 @@
+#%RAML 1.0
+title: MUA Flights API
+version: v1
+
+types: 
+  Flight: !include datatypes/Flight.raml
+  
+/flights:
+  get:
+    displayName: Get flights
+    queryParameters:
+      code:
+        displayName: Destination airport code
+        required: false
+        enum: 
+          - SFO
+          - LAX
+          - PDX
+          - CLE
+          - PDF
+      airline:
+        displayName: Airline
+        required: false
+        enum: 
+          - united
+          - delta
+          - american
+    responses:
+      200:
+        body:
+          application/json:
+            type: Flight[]
+            example: !include examples/FlightsExample.raml
